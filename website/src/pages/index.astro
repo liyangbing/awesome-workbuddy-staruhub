@@ -1,0 +1,380 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ResourceCard from '../components/ResourceCard.astro';
+import SearchBar from '../components/SearchBar.astro';
+import resources from '../data/resources.json';
+import prompts from '../data/prompts.json';
+
+const categoryLabels: Record<string, string> = {
+  official: '官方资源',
+  skills: '技能插件',
+  prompts: '提示词',
+  tutorials: '教程指南',
+  reviews: '深度评测',
+  comparisons: '对比测评',
+  integrations: '生态集成',
+  community: '社区讨论',
+  related: '相关列表',
+};
+
+const categories = resources.map(r => ({ id: r.id, name: r.category, label: categoryLabels[r.id] || r.category }));
+const allItems = resources.flatMap(r =>
+  r.items.map(item => ({ ...item, category: r.category, categoryId: r.id }))
+);
+
+const highlightedPrompts = prompts.slice(0, 6);
+---
+
+<Layout>
+  <!-- Hero Section -->
+  <header class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-navy-900 via-[#0a1628] to-navy-900"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,82,217,0.15),transparent_50%)]"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(79,143,255,0.08),transparent_70%)]"></div>
+
+    <div class="relative mx-auto max-w-6xl px-4 pb-16 pt-20 sm:px-6 lg:px-8 text-center">
+      <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-gray-300 backdrop-blur-sm">
+        <svg class="h-4 w-4 text-accent-light" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+        </svg>
+        <span>Open Source</span>
+        <span class="text-gray-500">|</span>
+        <span>CC0 License</span>
+      </div>
+
+      <h1 class="mb-4 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+        <span class="bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+          Awesome WorkBuddy
+        </span>
+      </h1>
+
+      <p class="mx-auto mb-8 max-w-2xl text-lg text-gray-400 leading-relaxed sm:text-xl">
+        腾讯 WorkBuddy 生态资源精选清单<br class="sm:hidden" />
+        <span class="text-gray-500">——</span>
+        官方资源、技能插件、提示词工作流、教程、评测与对比，一站式收录。
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a
+          href="https://github.com/ChaoGeek/awesome-workbuddy"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-accent-light hover:shadow-[0_0_20px_rgba(0,82,217,0.3)]"
+        >
+          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+          Star on GitHub
+        </a>
+        <a
+          href="https://www.workbuddy.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-medium text-gray-200 backdrop-blur-sm transition-all hover:border-white/40 hover:bg-white/10"
+        >
+          访问 WorkBuddy 官网
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
+        <span class="flex items-center gap-1.5">
+          <span class="inline-block h-2 w-2 rounded-full bg-green-500"></span>
+          {allItems.length} 个精选资源
+        </span>
+        <span class="flex items-center gap-1.5">
+          <span class="inline-block h-2 w-2 rounded-full bg-accent-light"></span>
+          {categories.length} 个分类
+        </span>
+        <span class="flex items-center gap-1.5">
+          <span class="inline-block h-2 w-2 rounded-full bg-purple-500"></span>
+          100 条提效 Prompts
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Search & Filter Section -->
+  <main class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <!-- Search -->
+    <section class="py-8">
+      <SearchBar />
+    </section>
+
+    <!-- Category Filter -->
+    <section class="pb-6">
+      <div class="flex flex-wrap items-center justify-center gap-2" id="category-filters">
+        <button
+          data-category="all"
+          class="category-btn active rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-gray-300 transition-all hover:border-accent/50 hover:text-white"
+        >
+          全部
+        </button>
+        {categories.map(cat => (
+          <button
+            data-category={cat.id}
+            class="category-btn rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-gray-300 transition-all hover:border-accent/50 hover:text-white"
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+    </section>
+
+    <!-- Resources Grid -->
+    <section class="pb-16" id="resources-section">
+      {resources.map(group => (
+        <div class="category-group mb-12" data-category-id={group.id}>
+          <h2 class="mb-6 text-xl font-bold text-gray-100 flex items-center gap-3">
+            <span class="inline-block h-1 w-6 rounded-full bg-gradient-to-r from-accent to-accent-light"></span>
+            {group.category}
+            <span class="text-sm font-normal text-gray-500">({group.items.length})</span>
+          </h2>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {group.items.map(item => (
+              <ResourceCard
+                title={item.title}
+                url={item.url}
+                description={item.description}
+                category={group.category}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <!-- Prompts Section -->
+    <section class="pb-16" id="prompts-section">
+      <div class="mb-8 text-center">
+        <h2 class="mb-3 text-2xl font-bold text-gray-100 sm:text-3xl">
+          100 条工作提效 Prompts
+        </h2>
+        <p class="text-gray-400">
+          10 大办公场景各 10 条，覆盖调研、报表、PPT、纪要、开发、运营等，可直接粘贴给 WorkBuddy 抄作业。
+        </p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {highlightedPrompts.map(prompt => (
+          <div class="rounded-xl border border-white/10 bg-navy-800 p-5 transition-all hover:border-accent/30">
+            <div class="mb-3 flex items-center justify-between">
+              <span class="inline-block rounded-full bg-purple-500/10 px-2.5 py-0.5 text-xs font-medium text-purple-400">
+                {prompt.category}
+              </span>
+              <span class="text-xs text-gray-600">#{prompt.id}</span>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-gray-200 leading-snug">
+              {prompt.title}
+            </h3>
+            <p class="mb-3 text-xs text-gray-500 leading-relaxed line-clamp-2">
+              {prompt.scene}
+            </p>
+            <p class="text-xs text-gray-400 leading-relaxed line-clamp-3">
+              {prompt.prompt.slice(0, 100)}...
+            </p>
+            <div class="mt-3 pt-3 border-t border-white/5">
+              <p class="text-xs text-accent-light/80">
+                <span class="font-medium">Tip:</span> {prompt.tip}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-8 text-center">
+        <a
+          href="https://github.com/ChaoGeek/awesome-workbuddy/blob/main/prompts/100-work-efficiency-prompts.json"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-2.5 text-sm font-medium text-gray-200 transition-all hover:border-accent/50 hover:bg-white/10"
+        >
+          查看全部 100 条 Prompts
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 bg-navy-900/80">
+    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
+        <div class="text-center sm:text-left">
+          <p class="text-sm text-gray-400">
+            Awesome WorkBuddy &mdash; 腾讯 WorkBuddy 生态资源精选清单
+          </p>
+          <p class="mt-1 text-xs text-gray-600">
+            以 <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gray-300 underline">CC0 1.0 Universal</a> 发布，不保留任何权利。
+          </p>
+        </div>
+        <div class="flex items-center gap-4">
+          <a
+            href="https://github.com/ChaoGeek/awesome-workbuddy"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 hover:text-gray-300 transition-colors"
+            aria-label="GitHub Repository"
+          >
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+            </svg>
+          </a>
+          <a
+            href="https://github.com/ChaoGeek/awesome-workbuddy/blob/main/CONTRIBUTING.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm text-gray-500 hover:text-gray-300 transition-colors"
+          >
+            贡献指南
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Client-side Search & Filter Script -->
+  <script define:vars={{ allItems, categories }}>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('search-input');
+      const searchStatus = document.getElementById('search-status');
+      const categoryButtons = document.querySelectorAll('.category-btn');
+      const categoryGroups = document.querySelectorAll('.category-group');
+      const resourceCards = document.querySelectorAll('.resource-card');
+
+      let currentCategory = 'all';
+      let fuse = null;
+
+      // Initialize Fuse.js
+      function initFuse() {
+        if (typeof Fuse !== 'undefined') {
+          fuse = new Fuse(allItems, {
+            keys: [
+              { name: 'title', weight: 0.4 },
+              { name: 'description', weight: 0.4 },
+              { name: 'category', weight: 0.2 }
+            ],
+            threshold: 0.4,
+            includeScore: true
+          });
+        }
+      }
+
+      // Try to init Fuse immediately or wait for script load
+      if (typeof Fuse !== 'undefined') {
+        initFuse();
+      } else {
+        const fuseScript = document.querySelector('script[src*="fuse"]');
+        if (fuseScript) {
+          fuseScript.addEventListener('load', initFuse);
+        }
+      }
+
+      // Category filter
+      categoryButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const category = btn.dataset.category;
+          currentCategory = category;
+
+          // Update active state
+          categoryButtons.forEach(b => {
+            b.classList.remove('active');
+            b.style.backgroundColor = '';
+            b.style.borderColor = '';
+            b.style.color = '';
+          });
+          btn.classList.add('active');
+          btn.style.backgroundColor = 'rgba(0, 82, 217, 0.15)';
+          btn.style.borderColor = 'rgba(0, 82, 217, 0.5)';
+          btn.style.color = '#4f8fff';
+
+          // Filter groups
+          if (category === 'all') {
+            categoryGroups.forEach(g => g.style.display = '');
+          } else {
+            categoryGroups.forEach(g => {
+              g.style.display = g.dataset.categoryId === category ? '' : 'none';
+            });
+          }
+
+          // Clear search when changing category
+          if (searchInput.value) {
+            searchInput.value = '';
+            resourceCards.forEach(card => card.style.display = '');
+            searchStatus.classList.add('hidden');
+          }
+        });
+      });
+
+      // Set initial active state
+      const initialBtn = document.querySelector('[data-category="all"]');
+      if (initialBtn) {
+        initialBtn.style.backgroundColor = 'rgba(0, 82, 217, 0.15)';
+        initialBtn.style.borderColor = 'rgba(0, 82, 217, 0.5)';
+        initialBtn.style.color = '#4f8fff';
+      }
+
+      // Search
+      let searchTimeout;
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const query = e.target.value.trim();
+
+          if (!query) {
+            // Reset: show all based on current category
+            resourceCards.forEach(card => card.style.display = '');
+            categoryGroups.forEach(g => {
+              if (currentCategory === 'all') {
+                g.style.display = '';
+              } else {
+                g.style.display = g.dataset.categoryId === currentCategory ? '' : 'none';
+              }
+            });
+            searchStatus.classList.add('hidden');
+            return;
+          }
+
+          if (!fuse) {
+            // Fallback: simple text matching
+            let matchCount = 0;
+            resourceCards.forEach(card => {
+              const title = (card.dataset.title || '').toLowerCase();
+              const desc = (card.dataset.description || '').toLowerCase();
+              const q = query.toLowerCase();
+              const matches = title.includes(q) || desc.includes(q);
+              card.style.display = matches ? '' : 'none';
+              if (matches) matchCount++;
+            });
+            categoryGroups.forEach(g => g.style.display = '');
+            searchStatus.textContent = `找到 ${matchCount} 个匹配结果`;
+            searchStatus.classList.remove('hidden');
+            return;
+          }
+
+          // Fuse.js search
+          const results = fuse.search(query);
+          const matchedTitles = new Set(results.map(r => r.item.title));
+
+          let matchCount = 0;
+          resourceCards.forEach(card => {
+            const title = card.dataset.title;
+            const matches = matchedTitles.has(title);
+            card.style.display = matches ? '' : 'none';
+            if (matches) matchCount++;
+          });
+
+          // Show all category groups during search
+          categoryGroups.forEach(g => g.style.display = '');
+
+          searchStatus.textContent = `找到 ${matchCount} 个匹配结果`;
+          searchStatus.classList.remove('hidden');
+        }, 200);
+      });
+    });
+  </script>
+</Layout>

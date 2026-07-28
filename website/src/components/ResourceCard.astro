@@ -1,0 +1,45 @@
+---
+interface Props {
+  title: string;
+  url: string;
+  description: string;
+  category: string;
+}
+
+const { title, url, description, category } = Astro.props;
+---
+
+<a
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="resource-card group block rounded-xl border border-white/10 bg-navy-800 p-5 transition-all duration-300 hover:scale-[1.02] hover:border-accent/50 hover:shadow-[0_0_20px_rgba(0,82,217,0.15)]"
+  data-title={title}
+  data-description={description}
+  data-category={category}
+>
+  <div class="mb-3 flex items-start justify-between gap-2">
+    <h3 class="text-base font-semibold text-gray-100 group-hover:text-accent-light transition-colors leading-snug">
+      {title}
+    </h3>
+    <svg
+      class="mt-0.5 h-4 w-4 shrink-0 text-gray-500 group-hover:text-accent-light transition-colors"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+      />
+    </svg>
+  </div>
+  <p class="mb-3 text-sm leading-relaxed text-gray-400">
+    {description}
+  </p>
+  <span class="inline-block rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent-light">
+    {category}
+  </span>
+</a>

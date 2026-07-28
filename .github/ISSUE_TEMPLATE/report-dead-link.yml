@@ -1,0 +1,36 @@
+name: "\U0001F6A8 报告失效链接 / Report Dead Link"
+description: "报告一个已失效或内容变质的链接"
+title: "[Dead Link] "
+labels: ["dead-link"]
+body:
+  - type: input
+    id: resource
+    attributes:
+      label: "资源名称 / Resource Name"
+      placeholder: "README 中的条目名称"
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: "失效链接 / Dead URL"
+      placeholder: "https://..."
+    validations:
+      required: true
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: "问题类型 / Issue Type"
+      options:
+        - "404 页面不存在"
+        - "301/302 重定向到无关页面"
+        - "需要付费/登录才能访问（未标注）"
+        - "内容变质（变成广告页等）"
+        - "其他"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: "补充说明 / Notes"
+      placeholder: "可选"

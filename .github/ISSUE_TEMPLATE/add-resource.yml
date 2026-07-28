@@ -1,0 +1,53 @@
+name: "\U0001F4E5 推荐资源 / Suggest Resource"
+description: "推荐一个与 WorkBuddy 相关的资源"
+title: "[Resource] "
+labels: ["new-resource"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: "资源名称 / Resource Name"
+      placeholder: "如：WorkBuddy 实战蓝皮书"
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: "链接 / URL"
+      placeholder: "https://..."
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: "分类 / Category"
+      options:
+        - "Official Resources 官方资源"
+        - "Skills & Plugins 技能与插件"
+        - "Prompts & Workflows 提示词与工作流"
+        - "Tutorials & Guides 教程与上手指南"
+        - "Deep Dives & Reviews 深度拆解与评测"
+        - "Comparisons 对比测评"
+        - "Integrations 生态集成"
+        - "Community 社区与讨论"
+        - "Related Awesome Lists 相关列表"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: "一句话说明 / One-line Description"
+      placeholder: "这个资源是什么、对使用者有什么用（不超过50字）"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "自查 / Checklist"
+      options:
+        - label: "该资源与 WorkBuddy 直接相关"
+          required: true
+        - label: "我已确认链接可正常访问"
+          required: true
+        - label: "README 中无重复条目"
+          required: true
