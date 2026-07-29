@@ -1,4 +1,16 @@
-# Awesome WorkBuddy [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
+<p align="center">
+  <img src="./assets/banner.png" alt="Awesome WorkBuddy" width="800" />
+</p>
+
+<p align="center">
+  <a href="https://awesome.re"><img src="https://awesome.re/badge.svg" alt="Awesome" /></a>
+  <a href="https://github.com/staruhub/awesome-workbuddy/stargazers"><img src="https://img.shields.io/github/stars/staruhub/awesome-workbuddy?style=social" alt="GitHub Stars" /></a>
+  <a href="https://github.com/staruhub/awesome-workbuddy/network/members"><img src="https://img.shields.io/github/forks/staruhub/awesome-workbuddy?style=social" alt="GitHub Forks" /></a>
+  <a href="https://github.com/staruhub/awesome-workbuddy/blob/main/LICENSE"><img src="https://img.shields.io/github/license/staruhub/awesome-workbuddy" alt="License" /></a>
+  <a href="https://github.com/staruhub/awesome-workbuddy/commits/main"><img src="https://img.shields.io/github/last-commit/staruhub/awesome-workbuddy" alt="Last Commit" /></a>
+</p>
+
+# Awesome WorkBuddy
 
 > 腾讯 WorkBuddy 生态资源精选清单：官方资源、技能插件、提示词工作流、教程、评测与对比，一站式收录。
 
