@@ -97,7 +97,7 @@
     "items": [
       {
         "title": "100 条工作提效 Prompts",
-        "url": "https://github.com/ChaoGeek/awesome-workbuddy/blob/main/prompts/100-work-efficiency-prompts.json",
+        "url": "https://github.com/staruhub/awesome-workbuddy/blob/main/prompts/100-work-efficiency-prompts.json",
         "description": "本仓库自带的提效指令库：10 大办公场景各 10 条，覆盖调研、报表、PPT、纪要、开发、运营、人事财务，每条含完整指令、预期交付物和使用技巧，可直接粘贴给 WorkBuddy 抄作业。"
       },
       {
