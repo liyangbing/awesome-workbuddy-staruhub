@@ -449,8 +449,8 @@ const chipDefs = [{ key: 'all', label: '全部' }, ...CATS.map(c => ({ key: c.ke
         <span>Awesome WorkBuddy — 腾讯 WorkBuddy 生态资源精选清单</span>
         <span style="font-family:'JetBrains Mono',monospace;">github.com/staruhub/awesome-workbuddy</span>
       </div>
-      <div style="overflow:hidden; margin-top:26px;">
-        <div style="font-family:'Archivo',sans-serif; font-weight:900; font-size:clamp(80px,13.2vw,200px); line-height:0.9; letter-spacing:-0.05em; color:var(--ghost); text-align:center; white-space:nowrap; user-select:none;">WORKBUDD&gt;_</div>
+      <div id="wb-spotlight-wrap" style="overflow:hidden; margin-top:26px; position:relative; cursor:default;">
+        <div id="wb-spotlight-text" style="font-family:'Archivo',sans-serif; font-weight:900; font-size:clamp(80px,13.2vw,200px); line-height:0.9; letter-spacing:-0.05em; text-align:center; white-space:nowrap; user-select:none; color:transparent; background:var(--ghost); -webkit-background-clip:text; background-clip:text; transition:background 0s;">WORKBUDD&gt;_</div>
       </div>
     </section>
   </div>
@@ -547,6 +547,25 @@ const chipDefs = [{ key: 'all', label: '全部' }, ...CATS.map(c => ({ key: c.ke
         el.style.transition = 'opacity .65s ease, transform .65s cubic-bezier(0.16,1,0.3,1)';
         io.observe(el);
       });
+      // Cursor spotlight on bottom text
+      var spotWrap = document.getElementById('wb-spotlight-wrap');
+      var spotText = document.getElementById('wb-spotlight-text');
+      if (spotWrap && spotText) {
+        spotWrap.addEventListener('mousemove', function(e) {
+          var rect = spotWrap.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          spotText.style.background = 'radial-gradient(circle 180px at ' + x + 'px ' + y + 'px, #12B981 0%, var(--ghost) 100%)';
+          spotText.style.webkitBackgroundClip = 'text';
+          spotText.style.backgroundClip = 'text';
+        });
+        spotWrap.addEventListener('mouseleave', function() {
+          spotText.style.background = 'var(--ghost)';
+          spotText.style.webkitBackgroundClip = 'text';
+          spotText.style.backgroundClip = 'text';
+        });
+      }
+
     })();
   </script>
 </Layout>
