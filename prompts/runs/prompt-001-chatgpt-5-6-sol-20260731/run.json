@@ -1,0 +1,35 @@
+{
+  "schema_version": 2,
+  "run_id": "prompt-001-chatgpt-5-6-sol-20260731",
+  "prompt_id": 1,
+  "prompt_sha256": "65184f042697f4d6adbf00bb5501f4117a5490f69b904a00870df2c243e31958",
+  "prompt_record_sha256": "9545b123ae4d62acec312e21f8cb283f2beab9e3a084e6231092b2c628efff7a",
+  "runner": {
+    "product": "ChatGPT",
+    "model": "GPT-5.6 Sol",
+    "mode": "极高",
+    "surface": "chatgpt.com 工作模式"
+  },
+  "executed_at": "2026-07-31T03:15:00Z",
+  "conversation_url": "https://chatgpt.com/c/WEB:e375e2f2-79bb-4746-b8e8-8bf2d65b023c",
+  "input_mode": "prompt_only",
+  "input_summary": "仅使用 canonical Prompt 1；实际联网检索公开来源，没有客户私有文件输入。",
+  "network_research": true,
+  "outcome": "complete",
+  "output_file": "client_report.md",
+  "output_sha256": "97f0dbd4b0954b4096c23bfab7cc567051c4883c5f093216a239afa42dd454cc",
+  "review": {
+    "status": "approved",
+    "reviewer": "Codex",
+    "reviewed_at": "2026-07-31T05:23:54Z",
+    "scope": [
+      "Codex 独立审核：全量校验 canonical 一一对应、哈希、唯一性、合成输入披露、元数据和路径安全。",
+      "内容审核：按 10 类分层人工抽样 20 条，并对全部 100 条执行长度、占位语、技术元数据泄露和 5-gram 重复检查。",
+      "审核仅确认结果可作为效果预览展示；不代表真实业务输入、外部事实或预期附件格式已经完成。"
+    ]
+  },
+  "limitations": [
+    "这是 ChatGPT GPT-5.6 Sol 的真实运行结果，不是 WorkBuddy 实跑。",
+    "付费数据库的完整方法论和 2025 年统一企业份额未公开，报告已保留宽、窄两套口径。"
+  ]
+}

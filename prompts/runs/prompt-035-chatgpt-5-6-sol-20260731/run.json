@@ -1,0 +1,37 @@
+{
+  "schema_version": 2,
+  "run_id": "prompt-035-chatgpt-5-6-sol-20260731",
+  "prompt_id": 35,
+  "prompt_sha256": "b3885c544586be46018ace460cf02447a5022f9d1918893b7a9ab8754ee6d93e",
+  "prompt_record_sha256": "d3bc12a733581305b93e35186b9e5d9271a30b2b7436a7f2c465344dff199ba5",
+  "runner": {
+    "product": "ChatGPT",
+    "model": "GPT-5.6 Sol",
+    "mode": "极高",
+    "surface": "chatgpt.com 工作模式"
+  },
+  "executed_at": "2026-07-31T04:02:00Z",
+  "conversation_url": "https://chatgpt.com/c/6a6c1f75-0964-83ea-8b53-28ca10e3e7b9",
+  "input_mode": "synthetic_demo",
+  "input_summary": "合成了蓝领招聘平台的业务数据、访谈和单位经济模型；未联网核对融资竞品。",
+  "network_research": false,
+  "outcome": "partial",
+  "output_file": "output.md",
+  "output_sha256": "aa12145058ecbd5bf2dca19ba706e81908dcf61fc482c93921b95e124457f01d",
+  "review": {
+    "status": "approved",
+    "reviewer": "Codex",
+    "reviewed_at": "2026-07-31T05:23:54Z",
+    "scope": [
+      "Codex 独立审核：全量校验 canonical 一一对应、哈希、唯一性、合成输入披露、元数据和路径安全。",
+      "内容审核：按 10 类分层人工抽样 20 条，并对全部 100 条执行长度、占位语、技术元数据泄露和 5-gram 重复检查。",
+      "审核仅确认结果可作为效果预览展示；不代表真实业务输入、外部事实或预期附件格式已经完成。"
+    ]
+  },
+  "limitations": [
+    "这是 ChatGPT GPT-5.6 Sol 的真实生成结果，不是 WorkBuddy 实跑。",
+    "使用小型合成演示输入，未读取真实客户文件或生产系统，结果不能替代真实项目交付。",
+    "本次未做联网研究；涉及实时事实、价格、政策、法律或市场数据的内容只作演示，不声称已经核验。",
+    "Prompt 2–100 由同一 ChatGPT 工作模式会话批量执行并归档；该链接记录本批次生成过程。"
+  ]
+}

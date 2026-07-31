@@ -3,11 +3,17 @@ import Layout from '../../layouts/Layout.astro';
 import { withBase } from '../../lib/catalog.mjs';
 import { buildPromptSearchText } from '../../lib/prompt-search.mjs';
 import { loadPrompts } from '../../lib/prompts.mjs';
+import { loadPromptRuns } from '../../lib/prompt-runs.mjs';
 
 const base = import.meta.env.BASE_URL;
 const homeHref = withBase(base, '/');
 const resourcesHref = withBase(base, '/#resources');
 const { prompts, counts } = loadPrompts();
+const runsByPromptId = loadPromptRuns({ prompts });
+const promptsWithRuns = prompts.map((prompt) => ({
+  ...prompt,
+  recordedRun: runsByPromptId.get(prompt.id),
+}));
 
 const CATEGORY_LABELS = {
   'deep-research': '深度调研',
@@ -27,11 +33,12 @@ const categoryFilters = Object.entries(counts).map(([key, count]) => ({
   count,
   label: CATEGORY_LABELS[key],
 }));
+
 ---
 
 <Layout
   title={`${prompts.length} 条 WorkBuddy 工作提效 Prompts`}
-  description="搜索、筛选并复制 100 条 WorkBuddy 工作提效提示词，覆盖调研、数据、文档、PPT、会议、项目、开发与运营。"
+  description="搜索、筛选并复制 100 条 WorkBuddy 工作提效提示词；查看已保存、独立审核后的静态效果预览。"
 >
   <style is:inline>
     html, body { margin:0; padding:0; background:var(--bgpage); }
@@ -44,7 +51,15 @@ const categoryFilters = Object.entries(counts).map(([key, count]) => ({
     [data-wb-theme="dark"] #prompt-logo { filter:brightness(0) invert(1); }
     .prompt-card[hidden] { display:none !important; }
     .filter-chip[aria-pressed="true"] { background:#12B981 !important; border-color:#12B981 !important; color:#fff !important; }
-    .copy-button:focus-visible, .filter-chip:focus-visible, #prompt-search:focus-visible, a:focus-visible, #theme-toggle:focus-visible { outline:3px solid rgba(18,185,129,0.35); outline-offset:3px; }
+    .copy-button:focus-visible, .trial-button:focus-visible, .filter-chip:focus-visible, #prompt-search:focus-visible, a:focus-visible, #theme-toggle:focus-visible, .trial-modal-button:focus-visible { outline:3px solid rgba(18,185,129,0.35); outline-offset:3px; }
+    .trial-modal-button:disabled { opacity:.45; cursor:not-allowed !important; }
+    #trial-modal[hidden] { display:none !important; }
+    #trial-output::after { content:""; display:inline-block; width:7px; height:1em; margin-left:3px; vertical-align:-0.12em; background:#12B981; animation:trial-caret .8s steps(1,end) infinite; }
+    #trial-output[data-complete="true"]::after { display:none; }
+    @keyframes trial-caret { 50% { opacity:0; } }
+    @media (prefers-reduced-motion:reduce) {
+      #trial-output::after { animation:none; }
+    }
     @media (max-width:760px) {
       [data-wrap] { padding-left:20px !important; padding-right:20px !important; }
       #prompt-header-source { display:none !important; }
@@ -55,6 +70,8 @@ const categoryFilters = Object.entries(counts).map(([key, count]) => ({
     @media (max-width:480px) {
       #prompt-h1 { font-size:34px !important; }
       #prompt-toolbar { padding:18px 0 !important; }
+      #trial-dialog { padding:20px !important; border-radius:16px !important; }
+      #trial-output { min-height:300px !important; }
     }
   </style>
 
@@ -74,9 +91,9 @@ const categoryFilters = Object.entries(counts).map(([key, count]) => ({
     <section style="position:relative; overflow:hidden; background:linear-gradient(180deg,var(--bgpage),var(--bgsoft)); border-bottom:1px solid var(--line);">
       <div style="position:absolute; right:-70px; bottom:-54px; font-family:'Archivo',sans-serif; font-weight:900; font-size:170px; color:var(--ghost); letter-spacing:-0.05em; pointer-events:none;">100</div>
       <div id="prompt-hero" data-wrap="1" style="position:relative; max-width:1240px; margin:0 auto; padding:84px 32px 66px;">
-        <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#12B981; margin-bottom:16px;">PROMPT LIBRARY · STATIC &amp; SEARCHABLE</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#12B981; margin-bottom:16px;">PROMPT LIBRARY · SEARCHABLE &amp; EVIDENCE-BACKED</div>
         <h1 id="prompt-h1" style="max-width:850px; margin:0; font-family:'Archivo','Noto Sans SC',sans-serif; font-size:64px; line-height:1.02; font-weight:900; letter-spacing:-0.045em;">{prompts.length} 条工作提效 Prompts</h1>
-        <p style="max-width:720px; margin:22px 0 0; font-size:16px; line-height:1.85; color:var(--t2);">按场景筛选，输入关键词搜索，找到合适的指令后一键复制给 WorkBuddy。所有内容都直接来自仓库根目录的权威 JSON。</p>
+        <p style="max-width:760px; margin:22px 0 0; font-size:16px; line-height:1.85; color:var(--t2);">按场景筛选并一键复制给 WorkBuddy。每个「试运行」只流式回放已保存并通过独立审核的 UTF-8 Markdown 正文；点击时不会现场调用模型、API 或本地文件。</p>
         <div style="display:flex; gap:12px; margin-top:30px; flex-wrap:wrap;">
           <a href={resourcesHref} style="display:inline-flex; align-items:center; background:#12B981; color:#fff; font-size:14px; font-weight:700; padding:13px 22px; border-radius:11px;">← 返回资源清单</a>
           <a href="https://github.com/staruhub/awesome-workbuddy/blob/main/prompts/100-work-efficiency-prompts.json" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; background:var(--card); border:1px solid var(--line); color:var(--ink); font-size:14px; font-weight:700; padding:13px 22px; border-radius:11px;">GitHub 源文件 ↗</a>
@@ -109,7 +126,7 @@ const categoryFilters = Object.entries(counts).map(([key, count]) => ({
       </div>
 
       <div id="prompt-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(min(360px,100%),1fr)); gap:16px;">
-        {prompts.map((prompt) => (
+        {promptsWithRuns.map((prompt) => (
           <article class="prompt-card" data-prompt-card data-category={prompt.category} data-search={buildPromptSearchText(prompt)} style="position:relative; display:flex; flex-direction:column; overflow:hidden; border:1px solid var(--line); border-radius:16px; background:var(--card); padding:24px;">
             <div style="position:absolute; right:14px; top:0; font-family:'Archivo',sans-serif; font-size:60px; font-weight:900; color:var(--ghost); letter-spacing:-0.05em; pointer-events:none;">{String(prompt.id).padStart(2, '0')}</div>
             <div style="position:relative; font-family:'JetBrains Mono',monospace; font-size:11px; color:#12B981;">{CATEGORY_LABELS[prompt.category]} · {prompt.category}</div>
@@ -122,13 +139,43 @@ const categoryFilters = Object.entries(counts).map(([key, count]) => ({
               <p style="margin:6px 0 0; font-size:12.5px; line-height:1.65; color:var(--t3);">{prompt.expected_output}</p>
             </div>
             <div style="margin-top:13px; padding:11px 13px; background:rgba(18,185,129,0.08); border-left:2px solid #12B981; border-radius:0 8px 8px 0; font-size:12.5px; line-height:1.65; color:var(--t2);">Tip · {prompt.tip}</div>
-            <button type="button" class="copy-button" data-copy-prompt aria-label={`复制提示词：${prompt.title}`} style="margin-top:16px; align-self:flex-start; border:1px solid var(--line); background:var(--bgsoft); color:var(--ink); border-radius:9px; padding:9px 14px; cursor:pointer; font-size:12.5px; font-weight:700;">复制 Prompt</button>
+            <div style="margin-top:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <button type="button" class="copy-button" data-copy-prompt aria-label={`复制提示词：${prompt.title}`} style="align-self:flex-start; border:1px solid var(--line); background:var(--bgsoft); color:var(--ink); border-radius:9px; padding:9px 14px; cursor:pointer; font-size:12.5px; font-weight:700;">复制 Prompt</button>
+              <button
+                type="button"
+                class="trial-button"
+                data-trial-run
+                aria-label={`回放实测结果：${prompt.title}`}
+                style="align-self:flex-start; border:1px solid #12B981; background:#12B981; color:#fff; border-radius:9px; padding:9px 14px; cursor:pointer; font-size:12.5px; font-weight:700;"
+              >试运行</button>
+            </div>
+            <template data-trial-preview>{prompt.recordedRun.output}</template>
           </article>
         ))}
       </div>
       <p id="copy-status" role="status" aria-live="polite" aria-atomic="true" style="position:fixed; left:-10000px; width:1px; height:1px; overflow:hidden;"></p>
       <noscript><p style="margin-top:28px; color:var(--t3);">未启用 JavaScript：全部提示词仍可阅读，但搜索、筛选和复制按钮不可用。</p></noscript>
     </main>
+
+    <div id="trial-modal" hidden role="presentation" style="position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:20px; background:rgba(5,12,10,0.68); backdrop-filter:blur(8px);">
+      <section id="trial-dialog" role="dialog" aria-modal="true" aria-labelledby="trial-title" style="width:min(820px,100%); max-height:min(760px,calc(100vh - 40px)); display:flex; flex-direction:column; overflow:hidden; padding:26px; border:1px solid var(--line); border-radius:22px; background:var(--card); box-shadow:0 24px 80px rgba(0,0,0,.28);">
+        <div style="display:flex; align-items:flex-start; gap:18px;">
+          <div style="min-width:0; flex:1;">
+            <h2 id="trial-title" style="margin:0; font-size:22px; line-height:1.35;">试运行</h2>
+          </div>
+          <button type="button" class="trial-modal-button" data-trial-close aria-label="关闭试运行预览" style="flex:0 0 auto; width:38px; height:38px; border:1px solid var(--line); border-radius:50%; background:var(--bgsoft); color:var(--ink); cursor:pointer; font-size:20px; line-height:1;">×</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:20px;">
+          <span id="trial-status-dot" aria-hidden="true" style="width:8px; height:8px; border-radius:50%; background:#12B981; box-shadow:0 0 0 5px rgba(18,185,129,.1);"></span>
+          <p id="trial-status" role="status" aria-live="polite" style="margin:0; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--t4);">准备预览</p>
+        </div>
+        <pre id="trial-output" data-complete="false" tabindex="0" aria-label="已保存的实测结果" aria-busy="false" style="min-height:360px; margin:16px 0 0; padding:20px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; border:1px solid var(--line); border-radius:14px; background:var(--bgsoft); color:var(--ink); font:12.5px/1.8 'JetBrains Mono','Noto Sans SC',monospace;"></pre>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px; flex-wrap:wrap;">
+          <button type="button" class="trial-modal-button" data-trial-skip style="border:1px solid var(--line); background:var(--bgsoft); color:var(--ink); border-radius:9px; padding:9px 14px; cursor:pointer; font-size:12.5px; font-weight:700;">立即显示</button>
+          <button type="button" class="trial-modal-button" data-trial-copy disabled style="border:1px solid #12B981; background:#12B981; color:#fff; border-radius:9px; padding:9px 14px; cursor:pointer; font-size:12.5px; font-weight:700;">复制实测结果</button>
+        </div>
+      </section>
+    </div>
   </div>
 
   <script is:inline>
@@ -204,6 +251,85 @@ const categoryFilters = Object.entries(counts).map(([key, count]) => ({
       }
 
       var copyStatus = document.getElementById('copy-status');
+      var trialModal = document.getElementById('trial-modal');
+      var trialTitle = document.getElementById('trial-title');
+      var trialOutput = document.getElementById('trial-output');
+      var trialStatus = document.getElementById('trial-status');
+      var trialSkip = trialModal.querySelector('[data-trial-skip]');
+      var trialCopy = trialModal.querySelector('[data-trial-copy]');
+      var trialClose = trialModal.querySelector('[data-trial-close]');
+      var trialTimer = null;
+      var trialText = '';
+      var trialIndex = 0;
+      var previousFocus = null;
+      var previousBodyOverflow = '';
+
+      function finishTrialPreview() {
+        window.clearTimeout(trialTimer);
+        trialTimer = null;
+        trialIndex = trialText.length;
+        trialOutput.textContent = trialText;
+        trialOutput.scrollTop = 0;
+        trialOutput.setAttribute('data-complete', 'true');
+        trialOutput.setAttribute('aria-busy', 'false');
+        trialStatus.textContent = '实测结果已完整展示';
+        trialSkip.hidden = true;
+        trialCopy.disabled = false;
+      }
+
+      function streamTrialPreview() {
+        if (trialIndex >= trialText.length) {
+          finishTrialPreview();
+          return;
+        }
+        trialIndex = Math.min(trialText.length, trialIndex + 8);
+        trialOutput.textContent = trialText.slice(0, trialIndex);
+        trialOutput.scrollTop = trialOutput.scrollHeight;
+        trialTimer = window.setTimeout(streamTrialPreview, 18);
+      }
+
+      function openTrialPreview(button) {
+        var card = button.closest('[data-prompt-card]');
+        if (!card) return;
+        var title = card.querySelector('h2');
+        var template = card.querySelector('[data-trial-preview]');
+        if (!title || !template) return;
+
+        window.clearTimeout(trialTimer);
+        previousFocus = document.activeElement;
+        previousBodyOverflow = document.body.style.overflow;
+        trialText = template.content.textContent;
+        trialIndex = 0;
+        trialTitle.textContent = title.textContent + ' · 试运行';
+        trialOutput.textContent = '';
+        trialOutput.setAttribute('data-complete', 'false');
+        trialOutput.setAttribute('aria-busy', 'true');
+        trialStatus.textContent = '正在流式回放已保存的实测结果…';
+        trialSkip.hidden = false;
+        trialCopy.disabled = true;
+        trialCopy.textContent = '复制实测结果';
+        trialModal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        trialClose.focus();
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          finishTrialPreview();
+        } else {
+          streamTrialPreview();
+        }
+      }
+
+      function closeTrialPreview() {
+        window.clearTimeout(trialTimer);
+        trialTimer = null;
+        trialOutput.setAttribute('aria-busy', 'false');
+        trialModal.hidden = true;
+        document.body.style.overflow = previousBodyOverflow;
+        if (previousFocus && typeof previousFocus.focus === 'function') {
+          previousFocus.focus();
+        }
+      }
+
       document.querySelectorAll('[data-copy-prompt]').forEach(function(button) {
         button.addEventListener('click', function() {
           var card = button.closest('[data-prompt-card]');
@@ -220,6 +346,54 @@ const categoryFilters = Object.entries(counts).map(([key, count]) => ({
             window.setTimeout(function() { button.textContent = '复制 Prompt'; }, 2400);
           });
         });
+      });
+
+      document.querySelectorAll('[data-trial-run]').forEach(function(button) {
+        button.addEventListener('click', function() {
+          openTrialPreview(button);
+        });
+      });
+
+      trialSkip.addEventListener('click', finishTrialPreview);
+      trialClose.addEventListener('click', closeTrialPreview);
+      trialCopy.addEventListener('click', function() {
+        copyText(trialText).then(function() {
+          trialCopy.textContent = '已复制 ✓';
+          copyStatus.textContent = '已复制试运行实测结果。';
+          window.setTimeout(function() {
+            trialCopy.textContent = '复制实测结果';
+          }, 1800);
+        }).catch(function() {
+          trialCopy.textContent = '复制失败';
+          copyStatus.textContent = '复制实测结果失败，请手动选择文本。';
+        });
+      });
+      trialModal.addEventListener('click', function(event) {
+        if (event.target === trialModal) closeTrialPreview();
+      });
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && !trialModal.hidden) {
+          closeTrialPreview();
+          return;
+        }
+        if (event.key === 'Tab' && !trialModal.hidden) {
+          var focusable = Array.prototype.slice.call(
+            trialModal.querySelectorAll(
+              'button:not([disabled]), a[href], [tabindex="0"]',
+            ),
+          ).filter(function(element) {
+            return !element.hidden;
+          });
+          var first = focusable[0];
+          var last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        }
       });
     })();
   </script>
