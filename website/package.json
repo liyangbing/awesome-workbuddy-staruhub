@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "check:data": "node scripts/validate-data.mjs",
-    "test": "node --test tests/*.test.mjs",
+    "check:data:review": "node scripts/validate-data.mjs --allow-pending",
+    "test": "node scripts/build-reviewed-fixture.mjs && node --test tests/*.test.mjs",
     "build": "npm run check:data && astro build",
     "preview": "astro preview",
     "astro": "astro"
