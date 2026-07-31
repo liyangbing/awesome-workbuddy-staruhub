@@ -1,0 +1,142 @@
+name: Link health
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - README.md
+      - CONTRIBUTING.md
+      - .github/workflows/links.yml
+  schedule:
+    - cron: "17 2 * * 0"
+  workflow_dispatch:
+
+concurrency:
+  group: link-health-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pull-request:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Check README links
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          # Exact baseline exceptions, independently browser-reviewed; never widen to whole domains.
+          args: >-
+            --verbose
+            --no-progress
+            --max-retries 3
+            --retry-wait-time 2
+            --timeout 30
+            --max-concurrency 16
+            --host-concurrency 2
+            --host-request-interval 250ms
+            --method get
+            --exclude ^https://github[.]com/staruhub/awesome-workbuddy/stargazers$
+            --exclude ^https://lbs[.]qq[.]com/article[?]id=1274$
+            --exclude ^https://view[.]inews[.]qq[.]com/a/20260718A057YA00$
+            --exclude ^https://www[.]gm7[.]org/archives/126714$
+            --exclude ^https://www[.]yun88[.]com/news/9636[.]html$
+            README.md
+          fail: true
+          failIfEmpty: true
+          jobSummary: true
+          lycheeVersion: v0.24.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+  maintenance:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Check README links
+        id: lychee
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          # Exact baseline exceptions, independently browser-reviewed; never widen to whole domains.
+          args: >-
+            --verbose
+            --no-progress
+            --max-retries 3
+            --retry-wait-time 2
+            --timeout 30
+            --max-concurrency 16
+            --host-concurrency 2
+            --host-request-interval 250ms
+            --method get
+            --exclude ^https://github[.]com/staruhub/awesome-workbuddy/stargazers$
+            --exclude ^https://lbs[.]qq[.]com/article[?]id=1274$
+            --exclude ^https://view[.]inews[.]qq[.]com/a/20260718A057YA00$
+            --exclude ^https://www[.]gm7[.]org/archives/126714$
+            --exclude ^https://www[.]yun88[.]com/news/9636[.]html$
+            README.md
+          fail: false
+          failIfEmpty: true
+          format: markdown
+          jobSummary: true
+          lycheeVersion: v0.24.2
+          output: ./lychee/out.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Create or update link-health issue
+        if: steps.lychee.outputs.exit_code != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          issue_title='[link-check] Broken links detected'
+          issue_number="$(gh issue list \
+            --state all \
+            --search 'in:title "[link-check] Broken links detected"' \
+            --limit 10 \
+            --json number,title \
+            --jq 'map(select(.title == "[link-check] Broken links detected")) | sort_by(.number) | last | .number // empty')"
+
+          {
+            printf '# Automated link-health report\n\n'
+            printf 'The scheduled or manually dispatched link check found one or more failures.\n\n'
+            printf 'Workflow run: %s/%s/actions/runs/%s\n\n' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID"
+            cat ./lychee/out.md
+          } > /tmp/awesome-workbuddy-link-report.md
+
+          if [ -n "$issue_number" ]; then
+            gh issue reopen "$issue_number" || true
+            gh issue edit "$issue_number" --body-file /tmp/awesome-workbuddy-link-report.md
+          else
+            gh issue create --title "$issue_title" --body-file /tmp/awesome-workbuddy-link-report.md
+          fi
+
+      - name: Close resolved link-health issue
+        if: steps.lychee.outputs.exit_code == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          issue_number="$(gh issue list \
+            --state open \
+            --search 'in:title "[link-check] Broken links detected"' \
+            --limit 10 \
+            --json number,title \
+            --jq 'map(select(.title == "[link-check] Broken links detected")) | sort_by(.number) | last | .number // empty')"
+
+          if [ -n "$issue_number" ]; then
+            gh issue close "$issue_number" --comment "Automated link check passed in workflow run $GITHUB_RUN_ID."
+          fi
+
+      - name: Fail on broken links
+        if: steps.lychee.outputs.exit_code != '0'
+        run: exit 1
