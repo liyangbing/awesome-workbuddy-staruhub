@@ -107,6 +107,7 @@
 
 ## Related Awesome Lists 相关列表
 
+- [Awesome WorkBuddy](https://github.com/sandbaseai/awesome-workbuddy) - 双语可搜索目录，提供生态活跃度排行、候选发现及第三方 Skill/MCP 的许可证与权限审查.
 - [awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) - 5400+ 个 OpenClaw 技能按 30+ 分类精选，WorkBuddy 完全兼容 OpenClaw 技能体系.
 - [awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) - Claude Code 生态精选；WorkBuddy 技能格式与 Claude Code Skill 互通，大量资源可复用.
 - [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) - MCP Server 大全，挑一个写进 WorkBuddy 的 mcp.json 即可扩展能力边界.
