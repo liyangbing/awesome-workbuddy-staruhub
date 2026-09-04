@@ -49,6 +49,7 @@
 - [7q-decision-skill](https://github.com/reallysix/7q-decision-skill) - 孙子兵法「五事七计」决策框架 Skill，附 workbuddy-guide.md 演示如何装入 WorkBuddy 并发布到 ClawHub.
 - [LinSkills](https://linskills.qiniu.com) - 七牛云维护的社区技能精选库，按下载量排行，ZIP 下载解压即用.
 - [GitHub Topic: workbuddy](https://github.com/topics/workbuddy) - GitHub 上 80+ 个 workbuddy 相关仓库的总入口，找新项目先看这里.
+- [WorkBuddy Skill Atlas](https://sandbaseai.github.io/workbuddy-skill/) - 检索万余个开源 Skill，查看兼容度与静态安全信号，并打包为 WorkBuddy 格式.
 
 ## Prompts & Workflows 提示词与工作流
 
